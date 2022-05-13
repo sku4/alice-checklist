@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "UTC",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "screen": {},
+      "payments": {},
+      "account_linking": {}
+    }
+  },
+  "session": {
+    "message_id": 1,
+    "session_id": "test_session_id",
+    "skill_id": "test_skill_id",
+    "user": {
+      "user_id": "test_user_id"
+    },
+    "application": {
+      "application_id": "test_application_id"
+    },
+    "user_id": "test_user_id",
+    "new": false
+  },
+  "request": {
+    "command": "список",
+    "original_utterance": "список",
+    "nlu": {
+      "tokens": [
+        "список"
+      ],
+      "entities": [],
+      "intents": {
+        "list": {
+          "slots": {
+            "list": {
+              "type": "YANDEX.STRING",
+              "tokens": {
+                "start": 0,
+                "end": 1
+              },
+              "value": "список"
+            }
+          }
+        }
+      }
+    },
+    "markup": {
+      "dangerous_context": false
+    },
+    "type": "SimpleUtterance"
+  },
+  "state": {
+    "session": {},
+    "user": {},
+    "application": {}
+  },
+  "version": "1.0"
+}

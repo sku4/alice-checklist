@@ -1,0 +1,158 @@
+basePath: /
+definitions:
+  alice.Intent:
+    properties:
+      slots:
+        additionalProperties:
+          $ref: '#/definitions/alice.Slot'
+        type: object
+    type: object
+  alice.Request:
+    properties:
+      application:
+        type: object
+      client_id:
+        type: string
+      command:
+        type: string
+      interfaces:
+        properties:
+          account_linking:
+            type: object
+          payments:
+            type: object
+          screen:
+            type: object
+        type: object
+      locale:
+        type: string
+      markup:
+        properties:
+          dangerous_context:
+            type: boolean
+        type: object
+      message_id:
+        type: integer
+      new:
+        type: boolean
+      nlu:
+        properties:
+          entities:
+            items:
+              properties:
+                tokens:
+                  properties:
+                    end:
+                      type: integer
+                    start:
+                      type: integer
+                  type: object
+                type:
+                  type: string
+                value: {}
+              type: object
+            type: array
+          intents:
+            additionalProperties:
+              $ref: '#/definitions/alice.Intent'
+            type: object
+          tokens:
+            items: {}
+            type: array
+        type: object
+      original_utterance:
+        type: string
+      session:
+        type: object
+      session_id:
+        type: string
+      skill_id:
+        type: string
+      timezone:
+        type: string
+      type:
+        type: string
+      user:
+        type: object
+      user_id:
+        type: string
+      version:
+        type: string
+    type: object
+  alice.Response:
+    properties:
+      end_session:
+        type: boolean
+      text:
+        type: string
+      tts:
+        type: string
+      version:
+        type: string
+    type: object
+  alice.Slot:
+    properties:
+      tokens:
+        properties:
+          end:
+            type: integer
+          start:
+            type: integer
+        type: object
+      type:
+        type: string
+      value:
+        type: string
+    type: object
+  handler.errorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: API Server for Alice checklist application
+  title: Alice webhook app API
+  version: "1.0"
+paths:
+  /cmd:
+    post:
+      consumes:
+      - application/json
+      description: Get answer by webhook alice command
+      operationId: alice-request
+      parameters:
+      - description: Body request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/alice.Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/alice.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/alice.Response'
+      summary: Webhook to Alice skill
+      tags:
+      - Alice
+swagger: "2.0"

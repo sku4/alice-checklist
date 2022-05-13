@@ -1,0 +1,9 @@
+{
+  "Invalid response, open chat to find details": "Ошибка обработки запроса, откройте чат чтобы узнать подробнее",
+  "To complete the list, say add or remove": "Для управления списком скажите добавить либо удалить",
+  "Process request": "Ваш запрос обрабатывается",
+  "Points success updated": "Список успешно обновлен",
+  "Your list: %s": "Ваш список: %s",
+  "List is empty": "Запрошенный список пуст",
+  "Repeat please": "Повторите, пожалуйста, еще раз"
+}

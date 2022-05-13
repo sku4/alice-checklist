@@ -1,0 +1,242 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API Server for Alice checklist application",
+        "title": "Alice webhook app API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/cmd": {
+            "post": {
+                "description": "Get answer by webhook alice command",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alice"
+                ],
+                "summary": "Webhook to Alice skill",
+                "operationId": "alice-request",
+                "parameters": [
+                    {
+                        "description": "Body request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/alice.Request"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/alice.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/alice.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "alice.Intent": {
+            "type": "object",
+            "properties": {
+                "slots": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/alice.Slot"
+                    }
+                }
+            }
+        },
+        "alice.Request": {
+            "type": "object",
+            "properties": {
+                "application": {
+                    "type": "object"
+                },
+                "client_id": {
+                    "type": "string"
+                },
+                "command": {
+                    "type": "string"
+                },
+                "interfaces": {
+                    "type": "object",
+                    "properties": {
+                        "account_linking": {
+                            "type": "object"
+                        },
+                        "payments": {
+                            "type": "object"
+                        },
+                        "screen": {
+                            "type": "object"
+                        }
+                    }
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "markup": {
+                    "type": "object",
+                    "properties": {
+                        "dangerous_context": {
+                            "type": "boolean"
+                        }
+                    }
+                },
+                "message_id": {
+                    "type": "integer"
+                },
+                "new": {
+                    "type": "boolean"
+                },
+                "nlu": {
+                    "type": "object",
+                    "properties": {
+                        "entities": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "tokens": {
+                                        "type": "object",
+                                        "properties": {
+                                            "end": {
+                                                "type": "integer"
+                                            },
+                                            "start": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "value": {}
+                                }
+                            }
+                        },
+                        "intents": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "$ref": "#/definitions/alice.Intent"
+                            }
+                        },
+                        "tokens": {
+                            "type": "array",
+                            "items": {}
+                        }
+                    }
+                },
+                "original_utterance": {
+                    "type": "string"
+                },
+                "session": {
+                    "type": "object"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "skill_id": {
+                    "type": "string"
+                },
+                "timezone": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "object"
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "alice.Response": {
+            "type": "object",
+            "properties": {
+                "end_session": {
+                    "type": "boolean"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "tts": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "alice.Slot": {
+            "type": "object",
+            "properties": {
+                "tokens": {
+                    "type": "object",
+                    "properties": {
+                        "end": {
+                            "type": "integer"
+                        },
+                        "start": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "type": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "handler.errorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

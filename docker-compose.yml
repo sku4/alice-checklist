@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  server:
+    image: "alice-checklist"
+    container_name: "alice"
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-local
+    volumes:
+      - ./db:/root/db
+      - ./configs/googlekeep:/root/configs/googlekeep
+    env_file:
+      - .env
+    ports:
+      - 8000:8000

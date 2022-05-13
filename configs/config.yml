@@ -1,0 +1,2 @@
+port: 8000
+db_file: "./db/cache.db"
