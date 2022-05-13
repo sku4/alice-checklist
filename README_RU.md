@@ -1,4 +1,4 @@
-# Skill "Checklist" for Alice voice assistant from Yandex.Dialogs based on Google Keep Notes [{ru}](/README_RU.md)
+# Навык "Чек-лист" для голосового помощника Алиса от Яндекс.Диалогов на основе Google Keep Notes [{en}](/README.md)
 [![golang version](https://img.shields.io/github/go-mod/go-version/sku4/alice-checklist?logo=go&style=flat-square)](#)
 [![project version](https://img.shields.io/github/v/tag/sku4/alice-checklist?color=97ca00&style=flat-square)](#)
 [![ci/cd](https://img.shields.io/static/v1?label=&message=CI%2FCD&color=555555&style=flat-square&logo=github)](#)
@@ -6,45 +6,45 @@
 [![bolt db](https://img.shields.io/static/v1?label=&message=BoltDB&color=555555&style=flat-square&logo=Amazon%20S3)](https://github.com/boltdb/bolt)
 [![clean architecture](https://img.shields.io/static/v1?label=&message=Clean%20Architecture&color=555555&style=flat-square)](#)
 
-The repository contains an application that implements a skill for Alice's voice assistant.
-The idea is based on the service from Google Keep Notes, which allows you to manage notes as
-in the web application and in the mobile application.
-In particular, from the point of view of convenience, a widget for the Android desktop is used.
+Репозиторий содержит приложение, реализующее навык для голосового помощника Алиса. 
+В основе идеи стоит сервис от Google Keep Notes, который позволяет управлять заметками как 
+в веб приложении, так и в мобильном приложении. 
+В частности, с точки зрения удобства используется виджет для рабочего стола под Android.
 
-Notes have a display format in the form of a checklist. Note management allows you to
-fast typing of words based on existing notes.
+Заметки имеют формат отображения в виде чек-листа. Управление заметками позволяет осуществлять 
+быстрый набор слов на основе уже существующих заметок.
 
-The main functionality is:
-1. [x] Adding new checklist items to Google Keep
-2. [x] Deleting items by marking them with a check mark - it is necessary that the old items are not physically deleted, 
-but remained for the convenience of speed dialing
+Основной функционал подразумевает:
+1. [x] Добавление новых пунктов чек-листа в Google Keep
+2. [x] Удаление пунктов путем пометки их галочкой - необходимо, чтобы старые пункты физически не удалялись, 
+а оставались для удобства работы быстрого набора
 
-## App settings
-1. In file ```configs/googlekeep/config.yml``` specify the id of the Google Keep Notes list, 
-where the checklist items will be managed (can be found in the web application request ```/notes/v1/changes```): 
+## Настройки приложения
+1. В файле ```configs/googlekeep/config.yml``` укажите id списка Google Keep Notes, 
+где будет осуществляться управление пунктами чек-листа (можно найти в запросе web приложения ```/notes/v1/changes```): 
 <details>
-  <summary>Example of getting noteRootId</summary>
+  <summary>Пример получения noteRootId</summary>
 
 url: https://keep.google.com
-![Example of getting noteRootId](./.github/images/1652481194651.jpg)
+![Пример получения noteRootId](./.github/images/1652481194651.jpg)
 </details>
 
 ```yaml
 noteRootId: "1650040828816.1396523598"
 ```
-2. Save to file ```configs/googlekeep/keep.google.com.har``` har content of the web application.
+2. Сохраните в файл ```configs/googlekeep/keep.google.com.har``` содержимое har контента web приложения.
 <details>
-  <summary>Example of getting a har file</summary>
+  <summary>Пример получения har файла</summary>
 
-![Example of getting a har file](./.github/images/1652480631785.jpg)
+![Пример получения har файла](./.github/images/1652480631785.jpg)
 </details>
 
-The necessary cookies and headers for sending requests to Google Keep will be extracted from this file.
+Из этого файла будут извлечены необходимые cookie и заголовки для отправки запросов в Google Keep.
 
-## Yandex.Dialog settings
-### Intent list
+## Настройки Яндекс.Диалогов
+### Интент list
 <details>
-  <summary>Grammar</summary>
+  <summary>Грамматика</summary>
 
 ```yaml
 root:
@@ -59,9 +59,9 @@ $List:
 ```
 </details>
 
-### Intent add_delete_products
+### Интент add_delete_products
 <details>
-  <summary>Grammar</summary>
+  <summary>Грамматика</summary>
 
 ```yaml
 root:
@@ -168,10 +168,10 @@ $Product20:
 ```
 </details>
 
-## Requirements
+## Требования
 - go 1.18
 - docker & docker-compose
 
-## Run Project
+## Запуск проекта
 
-Use ```make run``` to build and run docker containers with application itself
+Используйте ```make run``` для построения и запуска проекта в docker контейнере
