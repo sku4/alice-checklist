@@ -19,6 +19,8 @@ The main functionality is:
 2. [x] Deleting items by marking them with a check mark - it is necessary that the old items are not physically deleted, 
 but remained for the convenience of speed dialing
 
+Description of the implementation on [habr](https://habr.com/ru/post/667750/).
+
 ## App settings
 1. In file ```configs/googlekeep/config.yml``` specify the id of the Google Keep Notes list, 
 where the checklist items will be managed (can be found in the web application request ```/notes/v1/changes```): 
