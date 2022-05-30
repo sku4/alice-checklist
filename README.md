@@ -43,6 +43,8 @@ noteRootId: "1650040828816.1396523598"
 
 The necessary cookies and headers for sending requests to Google Keep will be extracted from this file.
 
+3. Empty .env file
+
 ## Yandex.Dialog settings
 ### Intent list
 <details>
