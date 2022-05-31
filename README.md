@@ -19,6 +19,8 @@ The main functionality is:
 2. [x] Deleting items by marking them with a check mark - it is necessary that the old items are not physically deleted, 
 but remained for the convenience of speed dialing
 
+Description of the implementation on [habr](https://habr.com/ru/post/667750/).
+
 ## App settings
 1. In file ```configs/googlekeep/config.yml``` specify the id of the Google Keep Notes list, 
 where the checklist items will be managed (can be found in the web application request ```/notes/v1/changes```): 
@@ -40,6 +42,8 @@ noteRootId: "1650040828816.1396523598"
 </details>
 
 The necessary cookies and headers for sending requests to Google Keep will be extracted from this file.
+
+3. Empty .env file
 
 ## Yandex.Dialog settings
 ### Intent list
@@ -167,6 +171,19 @@ $Product20:
   .+
 ```
 </details>
+
+### Activation phrases
+> запусти навык чек лист
+> 
+> добавь овощи и фрукты
+> 
+> удали макароны
+> 
+> какой получился список?
+
+> попроси чек лист добавить печенье
+
+> попроси чек лист огласить список
 
 ## Requirements
 - go 1.18
