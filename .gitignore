@@ -13,7 +13,6 @@
 *.test
 
 # Output of the go coverage tool, specifically when used with LiteIDE
-db
 *.out
 *.db
 *.lock
