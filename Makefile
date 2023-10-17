@@ -2,7 +2,6 @@
 
 export GOOS=linux
 build:
-	swag init -g ./cmd/main.go
 	go build -o ./.bin/app ./cmd/main.go
 
 run: build
@@ -24,3 +23,6 @@ start-container:
 		--env-file .env \
 		-p 8000:8000 \
 		sku4/alice-checklist:v1.0.0
+
+swagger:
+	swag init -g ./cmd/main.go
