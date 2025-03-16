@@ -26,3 +26,6 @@ start-container:
 
 swagger:
 	swag init -g ./cmd/main.go
+
+init-project-k8s:
+	@./scripts/init-project-k8s.sh alice prod
