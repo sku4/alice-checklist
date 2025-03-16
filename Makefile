@@ -31,12 +31,12 @@ init-project-k8s:
 	@./scripts/init-project-k8s.sh alice prod
 
 helm-install:
-	helm upgrade --install k8s .helm --namespace=alice-prod
+	helm upgrade --install "alice-checklist" .helm --namespace=alice-prod
 
 helm-install-local:
-	helm upgrade --install k8s .helm \
+	helm upgrade --install "alice-checklist" .helm \
 		--namespace=alice-prod \
 		-f ./.helm/values-local.yaml
 
 helm-template:
-	helm template --name-template=k8s --namespace=alice-prod -f .helm/values-local.yaml .helm > .helm/helm.txt
+	helm template --name-template="alice-checklist" --namespace=alice-prod -f .helm/values-local.yaml .helm > .helm/helm.txt
