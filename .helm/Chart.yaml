@@ -1,0 +1,6 @@
+apiVersion: v2
+type: application
+name: alice-checklist
+version: 1.0.0
+appVersion: "1.0.0"
+description: Skill "Checklist" for Alice voice assistant from Yandex.Dialogs based on Google Keep Notes

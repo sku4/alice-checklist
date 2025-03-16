@@ -73,6 +73,21 @@ EOF
         $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
 
     echo
+    echo -e "${GREEN}creating secret for docker registry:${NC}"
+    kubectl create secret generic regcred \
+        --from-literal=.dockerconfigjson="{}" \
+        --type=kubernetes.io/dockerconfigjson --namespace=$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
+    echo
+
+    echo
+    echo -e "${GREEN}creating secret for google keep:${NC}"
+    kubectl create secret generic googlekeep \
+            --from-literal="keep.google.com.har"="{}" \
+            --from-literal="config.yaml"="{}" \
+            --namespace=$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
+    echo
+
+    echo
     echo -e "${GREEN}access token for new CI user:${NC}"
     kubectl get secret \
         --namespace $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME \
