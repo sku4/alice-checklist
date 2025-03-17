@@ -47,7 +47,7 @@ jobs:
 
       - name: Delete previous tag
         run: |
-          prevTag=$(doctl registry repository list-tags repository --format Tag | grep alice)
+          prevTag="$(doctl registry repository list-tags repository --format Tag | grep alice)"
           if [ -n "$prevTag" ]
           then
               echo "Previous tag ${prevTag}"
