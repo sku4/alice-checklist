@@ -51,7 +51,9 @@ jobs:
           if [ -n "$prevTag" ]
           then
               echo "Previous tag ${prevTag}"
+              echo "123456"
               doctl registry repository delete-tag $(echo $REPOSITORY) $(echo $prevTag)
+              echo "999"
               echo "Start garbage collection clean"
               doctl registry garbage-collection start
           else
