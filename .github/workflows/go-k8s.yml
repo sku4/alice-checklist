@@ -53,7 +53,7 @@ jobs:
               echo "Previous tag ${prevTag}"
               doctl registry repository delete-tag --force $(echo $REPOSITORY) $(echo $prevTag)
               echo "Start garbage collection clean"
-              doctl registry garbage-collection start
+              doctl registry garbage-collection start --force
           else
               echo "Not have previous tag"
           fi
