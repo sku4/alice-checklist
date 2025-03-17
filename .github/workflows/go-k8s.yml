@@ -47,11 +47,12 @@ jobs:
 
       - name: Delete previous tag
         run: |
-          prevTag="$(doctl registry repository list-tags repository --format Tag | grep alice)"
-          if [ -n "$prevTag" ]
+          prevManifest="$(doctl registry repository list-manifests repository \
+            --format Digest,Tags --no-header=true -o json | grep alice | cut -c1-72)"
+          if [ -n "$prevManifest" ]
           then
-              echo "Previous tag ${prevTag}"
-              doctl registry repository delete-tag --force $(echo $REPOSITORY) $(echo $prevTag)
+              echo "Previous digest manifest ${prevManifest}"
+              doctl registry repository delete-manifest --force $(echo $REPOSITORY) $(echo $prevManifest)
               echo "Start garbage collection clean"
               doctl registry garbage-collection start --force
           else
