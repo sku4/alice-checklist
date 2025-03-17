@@ -48,7 +48,7 @@ jobs:
       - name: Delete previous digest manifest
         run: |
           prevManifest="$(doctl registry repository list-manifests repository \
-            --format Digest,Tags --no-header=true -o json | grep alice | cut -c1-72)"
+            --format Digest,Tags --no-header=true | grep alice | cut -c1-72)"
           if [ -n "$prevManifest" ]
           then
               echo "Previous digest manifest ${prevManifest}"
