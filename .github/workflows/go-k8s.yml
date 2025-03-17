@@ -45,7 +45,7 @@ jobs:
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 600
 
-      - name: Delete previous tag
+      - name: Delete previous digest manifest
         run: |
           prevManifest="$(doctl registry repository list-manifests repository \
             --format Digest,Tags --no-header=true -o json | grep alice | cut -c1-72)"
@@ -56,7 +56,7 @@ jobs:
               echo "Start garbage collection clean"
               doctl registry garbage-collection start --force
           else
-              echo "Not have previous tag"
+              echo "Not found previous digest manifest"
           fi
 
       - name: Push image to DigitalOcean Container Registry
