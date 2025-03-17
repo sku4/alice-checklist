@@ -54,7 +54,7 @@ jobs:
               echo "Previous digest manifest ${prevManifest}"
               doctl registry repository delete-manifest --force $(echo $REPOSITORY) $(echo $prevManifest)
               echo "Start garbage collection clean"
-              doctl registry garbage-collection start --force
+              doctl registry garbage-collection start --include-untagged-manifests --force
           else
               echo "Not found previous digest manifest"
           fi
