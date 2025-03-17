@@ -46,8 +46,8 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: Delete previous tag
-        run: |
-          export prevTag=$(doctl registry repository list-tags repository --format Tag | grep alice)
+        script: |
+          prevTag=$(doctl registry repository list-tags repository --format Tag | grep alice)
           doctl registry repository delete-tag $(echo $REPOSITORY) $(echo $prevTag)
 
       - name: Start garbage collection clean
