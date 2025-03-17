@@ -3,8 +3,6 @@ name: Go
 on:
   push:
     branches: [ docker ]
-  pull_request:
-    branches: [ docker ]
 
 env:
   REGISTRY: "registry.digitalocean.com/sku4"
