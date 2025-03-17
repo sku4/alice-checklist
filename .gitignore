@@ -1,5 +1,6 @@
 # Editors
 .idea
+vendor
 
 # Binaries for programs and plugins
 .bin
