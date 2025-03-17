@@ -3,8 +3,6 @@ name: Go
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 env:
   REGISTRY: "registry.digitalocean.com/sku4"
@@ -49,9 +47,11 @@ jobs:
 
       - name: Delete previous tag
         run: |
-          doctl registry repository delete-tag $(echo $REPOSITORY) \
-            $(doctl registry repository list-tags repository --format Tag | grep alice)
-          doctl registry garbage-collection start
+          $prevTag = $(doctl registry repository list-tags repository --format Tag | grep alice)
+          doctl registry repository delete-tag $(echo $REPOSITORY) $prevTag
+
+      - name: Start garbage collection clean
+        run: doctl registry garbage-collection start
 
       - name: Push image to DigitalOcean Container Registry
         run: docker push $(echo $REGISTRY)/$(echo $REPOSITORY):$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
