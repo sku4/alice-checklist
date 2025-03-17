@@ -48,10 +48,15 @@ jobs:
       - name: Delete previous tag
         script: |
           prevTag=$(doctl registry repository list-tags repository --format Tag | grep alice)
-          doctl registry repository delete-tag $(echo $REPOSITORY) $(echo $prevTag)
-
-      - name: Start garbage collection clean
-        run: doctl registry garbage-collection start
+          if [ -n "$prevTag" ]
+          then
+              echo "Previous tag ${prevTag}"
+              doctl registry repository delete-tag $(echo $REPOSITORY) $(echo $prevTag)
+              echo "Start garbage collection clean"
+              doctl registry garbage-collection start
+          else
+              echo "Not have previous tag"
+          fi
 
       - name: Push image to DigitalOcean Container Registry
         run: docker push $(echo $REGISTRY)/$(echo $REPOSITORY):$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
