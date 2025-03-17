@@ -46,7 +46,7 @@ jobs:
         run: doctl registry login --expiry-seconds 600
 
       - name: Delete previous tag
-        script: |
+        run: |
           prevTag=$(doctl registry repository list-tags repository --format Tag | grep alice)
           if [ -n "$prevTag" ]
           then
