@@ -70,21 +70,24 @@ jobs:
       - name: Deploy to Digital Ocean droplet via helm action
         uses: actions/checkout@v3
 
-      - uses: deliverybot/helm@v1
+      - uses: azure/setup-kubectl@v4
+
+      - uses: azure/k8s-set-context@v4
         with:
-          release: 'alice-checklist'
-          namespace: 'alice-prod'
-          chart: '.helm'
-          token: '${{ github.token }}'
-          secrets: '${{ toJSON(secrets) }}'
-          version: '${{ github.sha }}'
-          values: |
-            image.repository: '$(echo $REGISTRY)/$(echo $REPOSITORY)'
-            image.tag: '$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)'
-          repo: '${{ $REGISTRY }}/${{ $REPOSITORY }}'
-          timeout: 1
-          dry-run: 'true'
-        env:
-          KUBECONFIG_FILE: ${{ secrets.K8S_KUBECONFIG_FILE }}
+          method: service-account
+          k8s-url: https://${{ secrets.HOST }}:6443
+          k8s-secret: ${{ secrets.K8S_SECRET_ALICE_PROD_YAML }}
 
+      - uses: azure/setup-helm@v4.3.0
 
+      - name: Helm chart upgrade start
+        run: |
+          helm upgrade --install "alice-checklist" .helm \
+            --namespace=alice-prod \
+            --set image.repository=$(echo $REGISTRY)/$(echo $REPOSITORY) \
+            --set image.tag=$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7) \
+            --wait \
+            --timeout 300s \
+            --atomic \
+            --debug \
+            --dry-run
