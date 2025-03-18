@@ -67,29 +67,24 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy to Digital Ocean droplet via k8s action
+      - name: Deploy to Digital Ocean droplet via helm action
         uses: actions/checkout@v3
 
-      - uses: azure/setup-kubectl@v4
-
-      - uses: azure/k8s-set-context@v4
+      - uses: deliverybot/helm@v1
         with:
-          method: service-account
-          k8s-url: https://${{ secrets.HOST }}:6443
-          k8s-secret: ${{ secrets.K8S_SECRET_ALICE_PROD_YAML }}
-
-      - uses: azure/k8s-bake@v3
-        with:
-          renderEngine: 'helm'
-          helmChart: './.helm/'
-          releaseName: 'alice-checklist'
+          release: 'alice-checklist'
           namespace: 'alice-prod'
-          overrides: |
-            image.repository:$(echo $REGISTRY)/$(echo $REPOSITORY)
-            image.tag:$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
-          helm-version: 'latest'
-          silent: 'false'
-          envs: REPOSITORY,REGISTRY,GITHUB_SHA,CONTAINER_NAME
-        id: bake
+          chart: '.helm'
+          token: '${{ github.token }}'
+          secrets: '${{ toJSON(secrets) }}'
+          version: '${{ github.sha }}'
+          values: |
+            image.repository: ${{ $REGISTRY }}/${{ $REPOSITORY }}
+            image.tag: ${{ $CONTAINER_NAME }}-${{ $GITHUB_SHA | head -c7 }}
+          repo: '${{ $REGISTRY }}/${{ $REPOSITORY }}'
+          timeout: 1
+          dry-run: 'true'
+        env:
+          KUBECONFIG_FILE: ${{ secrets.K8S_KUBECONFIG_FILE }}
 
 
