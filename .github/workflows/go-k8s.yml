@@ -81,7 +81,7 @@ jobs:
       - uses: azure/k8s-bake@v3
         with:
           renderEngine: 'helm'
-          helmChart: './helm/'
+          helmChart: './.helm/'
           overrides: |
             image.repository:$(echo $REGISTRY)/$(echo $REPOSITORY)
             image.tag:$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
