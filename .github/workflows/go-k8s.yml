@@ -79,8 +79,8 @@ jobs:
           secrets: '${{ toJSON(secrets) }}'
           version: '${{ github.sha }}'
           values: |
-            image.repository: $(echo $REGISTRY)/$(echo $REPOSITORY)
-            image.tag: $(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
+            image.repository: '$(echo $REGISTRY)/$(echo $REPOSITORY)'
+            image.tag: '$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)'
           repo: '${{ $REGISTRY }}/${{ $REPOSITORY }}'
           timeout: 1
           dry-run: 'true'
