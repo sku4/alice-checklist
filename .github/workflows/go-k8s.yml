@@ -68,11 +68,22 @@ jobs:
 
     steps:
       - name: Deploy to Digital Ocean droplet via SSH action
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           envs: REPOSITORY,REGISTRY,GITHUB_SHA,CONTAINER_NAME
-          script: |
-            echo "hello"
+          script:
+            - kubectl config set-cluster k8s --insecure-skip-tls-verify=true --server=https://${{ secrets.HOST }}:6443
+            - kubectl config set-credentials ci --token=${{ secrets.K8S_CI_TOKEN }}
+            - kubectl config set-context ci --cluster=k8s --user=ci
+            - kubectl config use-context ci
+            - helm upgrade --install "alice-checklist" .helm
+              --set image.repository=$(echo $REGISTRY)/$(echo $REPOSITORY)
+              --set image.tag=$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
+              --wait
+              --timeout 300s
+              --atomic
+              --debug
+              --namespace alice-prod
