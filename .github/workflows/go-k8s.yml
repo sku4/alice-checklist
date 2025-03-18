@@ -82,7 +82,12 @@ jobs:
 
       - name: Helm chart upgrade start
         run: |
-          helm template --name-template="alice-checklist" .helm \
+          helm upgrade --install "alice-checklist" .helm \
             --namespace='alice-prod' \
             --set image.repository=$(echo $REGISTRY)/$(echo $REPOSITORY) \
-            --set image.tag=$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
+            --set image.tag=$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7) \
+            --wait \
+            --timeout 300s \
+            --atomic \
+            --debug \
+            --dry-run
