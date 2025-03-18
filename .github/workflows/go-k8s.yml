@@ -76,7 +76,7 @@ jobs:
         with:
           method: service-account
           k8s-url: https://${{ secrets.HOST }}:6443
-          k8s-secret: ${{ secrets.K8S_CI_TOKEN }}
+          k8s-secret: ${{ secrets.K8S_SECRET_ALICE_PROD_YAML }}
 
       - uses: azure/k8s-bake@v3
         with:
@@ -86,6 +86,7 @@ jobs:
             image.repository:$(echo $REGISTRY)/$(echo $REPOSITORY)
             image.tag:$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
           helm-version: 'latest'
+          silent: 'false'
         id: bake
 
 
