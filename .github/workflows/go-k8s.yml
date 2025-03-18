@@ -89,6 +89,7 @@ jobs:
             image.tag:$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
           helm-version: 'latest'
           silent: 'false'
+          envs: REPOSITORY,REGISTRY,GITHUB_SHA,CONTAINER_NAME
         id: bake
 
 
