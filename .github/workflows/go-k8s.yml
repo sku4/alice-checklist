@@ -82,9 +82,7 @@ jobs:
         with:
           renderEngine: 'helm'
           helmChart: './.helm/'
-          arguments: |
-            --name-template
-            "alice-checklist"
+          releaseName: "alice-checklist"
           overrides: |
             image.repository:$(echo $REGISTRY)/$(echo $REPOSITORY)
             image.tag:$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7)
