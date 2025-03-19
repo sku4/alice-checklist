@@ -79,6 +79,8 @@ jobs:
           k8s-secret: ${{ secrets.K8S_SECRET_ALICE_PROD_YAML }}
 
       - uses: azure/setup-helm@v4.3.0
+        with:
+          version: '3.17.1'
 
       - name: Helm chart upgrade
         run: |

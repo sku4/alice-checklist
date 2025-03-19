@@ -59,7 +59,20 @@ EOF
         metadata:
           name: $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
         rules:
-        - apiGroups: ["", "extensions", "apps", "batch", "events", "certmanager.k8s.io", "cert-manager.io", "monitoring.coreos.com"]
+        - apiGroups: ["", "events", "apps", "networking.k8s.io", "certmanager.k8s.io", "cert-manager.io", "monitoring.coreos.com", "rbac.authorization.k8s.io"]
+          resources: ["*"]
+          verbs: ["*"]
+EOF
+
+    echo
+    echo -e "${GREEN}creating CI cluster role for project${NC}"
+    cat << EOF | kubectl create -f -
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
+        rules:
+        - apiGroups: ["", "cert-manager.io", "rbac.authorization.k8s.io", "storage.k8s.io"]
           resources: ["*"]
           verbs: ["*"]
 EOF
@@ -70,6 +83,13 @@ EOF
         --namespace $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME \
         --serviceaccount $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME:$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME \
         --role $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME \
+        $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
+
+    echo
+    echo -e "${GREEN}creating CI cluster rolebinding for project${NC}"
+    kubectl create clusterrolebinding \
+        --serviceaccount $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME:$CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME \
+        --clusterrole $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME \
         $CI_PROJECT_PATH_SLUG-$CI_ENVIRONMENT_NAME
 
     echo
