@@ -111,3 +111,5 @@ persistentVolume:
 
 storageClass:
   create: true
+certManager:
+  enabled: false
