@@ -46,13 +46,10 @@ ingress:
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls:
-    - hosts:
-        - alice.gohome.run
-      secretName: alice-gohome-run-tls
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls: []
+#    - hosts:
+#        - alice.gohome.run
+#      secretName: alice-gohome-run-tls
   email: skubach@tut.by
 
 resources: {}
