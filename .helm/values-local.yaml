@@ -31,7 +31,8 @@ securityContext: {}
 service:
   create: true
   type: ClusterIP
-  port: 8000
+  externalPort: 80
+  internalPort: 8000
 
 ingress:
   enabled: false
@@ -48,6 +49,7 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+  email: skubach@tut.by
 
 resources: {}
   # limits:
@@ -108,3 +110,5 @@ persistentVolume:
 
 storageClass:
   create: true
+certManager:
+  enabled: false
