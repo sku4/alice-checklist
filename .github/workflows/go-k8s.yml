@@ -89,7 +89,7 @@ jobs:
             --namespace alice-prod \
             --set image.repository=$(echo $REGISTRY)/$(echo $REPOSITORY) \
             --set image.tag=$(echo $CONTAINER_NAME)-$(echo $GITHUB_SHA | head -c7) \
-            --description $(echo $GITHUB_SHA | head -c7) \
+            --description "$(echo $GITHUB_SHA | head -c7)" \
             --wait \
             --timeout 300s \
             --atomic \
