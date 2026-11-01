@@ -3,6 +3,8 @@ package googlekeep
 import (
 	"bufio"
 	"bytes"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,6 +17,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 )
 
 const (
@@ -25,6 +28,13 @@ const (
 	UrlContainPrefix1      = "notes-pa"
 	UrlContainPrefix2      = "changes"
 	UrlContainPrefix3      = "google.com"
+	// CookieSapisidKey holds the cookie whose value is used to compute SAPISIDHASH.
+	CookieSapisidKey = "SAPISID"
+	// CookieSapisidFallbackKey is used when SAPISID is missing (e.g. Secure-only contexts).
+	CookieSapisidFallbackKey = "__Secure-3PAPISID"
+	// OriginKeep is the default origin used for SAPISIDHASH computation.
+	OriginKeep        = "https://keep.google.com"
+	SapisidHashPrefix = "SAPISIDHASH "
 )
 
 type Client struct {
@@ -273,12 +283,22 @@ func (r *Client) send(postData googlekeep.Request) (entryNoteResp googlekeep.Res
 		}
 	}
 
+	// SAPISID value used to recompute the SAPISIDHASH Authorization header with a
+	// fresh timestamp on every request. The hash captured in the HAR carries a
+	// stale timestamp that Google rejects (401 CREDENTIALS_MISSING); the SAPISID
+	// cookie itself stays valid for months, so recomputing the hash keeps auth alive.
+	sapisid, origin := sapisidForHash(harEntryNote)
+
 	for _, header := range harEntryNote.Request.Headers {
 		switch header.Name {
 		case HeaderXOriginKey:
-			fallthrough
-		case HeaderAuthorizationKey:
 			req.Header.Add(header.Name, header.Value)
+		case HeaderAuthorizationKey:
+			if sapisid != "" && strings.HasPrefix(header.Value, SapisidHashPrefix) {
+				req.Header.Add(header.Name, buildSapisidHash(sapisid, origin))
+			} else {
+				req.Header.Add(header.Name, header.Value)
+			}
 		}
 	}
 
@@ -310,4 +330,32 @@ func (r *Client) send(postData googlekeep.Request) (entryNoteResp googlekeep.Res
 	}
 
 	return
+}
+
+// sapisidForHash extracts the SAPISID cookie value (falling back to its secure
+// variant) and the request origin to use for SAPISIDHASH computation.
+func sapisidForHash(entry *har.Entry) (sapisid, origin string) {
+	origin = OriginKeep
+	for _, cookie := range entry.Request.Cookies {
+		if cookie.Name == CookieSapisidKey {
+			sapisid = cookie.Value
+		} else if sapisid == "" && cookie.Name == CookieSapisidFallbackKey {
+			sapisid = cookie.Value
+		}
+	}
+	for _, header := range entry.Request.Headers {
+		if header.Name == HeaderXOriginKey && header.Value != "" {
+			origin = header.Value
+		}
+	}
+	return
+}
+
+// buildSapisidHash computes a fresh SAPISIDHASH: "<unix_ts>_<sha1(ts SAPISID origin)>".
+// Google validates the hash and rejects timestamps too far from now, so the
+// timestamp is taken at call time rather than reused from the HAR.
+func buildSapisidHash(sapisid, origin string) string {
+	ts := time.Now().Unix()
+	sum := sha1.Sum([]byte(fmt.Sprintf("%d %s %s", ts, sapisid, origin)))
+	return fmt.Sprintf("%s%d_%s", SapisidHashPrefix, ts, hex.EncodeToString(sum[:]))
 }
