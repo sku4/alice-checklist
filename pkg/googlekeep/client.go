@@ -35,6 +35,10 @@ const (
 	// OriginKeep is the default origin used for SAPISIDHASH computation.
 	OriginKeep        = "https://keep.google.com"
 	SapisidHashPrefix = "SAPISIDHASH "
+	// ChangesUrlTmpl is the Google Keep sync endpoint; the API key is taken from
+	// any notes-pa entry captured in the HAR (it is shared across endpoints).
+	ChangesUrlTmpl = "https://notes-pa.clients6.google.com/notes/v1/changes?alt=json&key=%s"
+	UrlQueryKey    = "key="
 )
 
 type Client struct {
@@ -246,11 +250,21 @@ func (r *Client) send(postData googlekeep.Request) (entryNoteResp googlekeep.Res
 
 	var harEntryNote *har.Entry
 	for _, entry := range h.Log.Entries {
-		if strings.Contains(entry.Request.URL, UrlContainPrefix1) &&
-			strings.Contains(entry.Request.URL, UrlContainPrefix2) &&
-			strings.Contains(entry.Request.URL, UrlContainPrefix3) {
+		if !strings.Contains(entry.Request.URL, UrlContainPrefix1) ||
+			!strings.Contains(entry.Request.URL, UrlContainPrefix3) {
+			continue
+		}
+		// Prefer a "changes" entry that actually carries cookies, but accept any
+		// notes-pa entry with cookies: the auth scheme (SAPISID + SAPISIDHASH) is
+		// shared across notes-pa endpoints, and the API key is the same. Modern
+		// browsers strip credentials from HAR exports, so an entry with cookies is
+		// the real requirement. The changes URL is built from the harvested key.
+		if strings.Contains(entry.Request.URL, UrlContainPrefix2) && len(entry.Request.Cookies) > 0 {
 			harEntryNote = entry
 			break
+		}
+		if harEntryNote == nil && len(entry.Request.Cookies) > 0 {
+			harEntryNote = entry
 		}
 	}
 
@@ -260,12 +274,17 @@ func (r *Client) send(postData googlekeep.Request) (entryNoteResp googlekeep.Res
 		))
 	}
 
+	changesUrl, err := buildChangesUrl(harEntryNote.Request.URL)
+	if err != nil {
+		return entryNoteResp, err
+	}
+
 	postDataJson, err := json.Marshal(postData)
 	if err != nil {
 		return
 	}
 
-	req, err := http.NewRequest(http.MethodPost, harEntryNote.Request.URL,
+	req, err := http.NewRequest(http.MethodPost, changesUrl,
 		bytes.NewBuffer(postDataJson))
 	if err != nil {
 		return entryNoteResp, errors.New(fmt.Sprintf(
@@ -358,4 +377,20 @@ func buildSapisidHash(sapisid, origin string) string {
 	ts := time.Now().Unix()
 	sum := sha1.Sum([]byte(fmt.Sprintf("%d %s %s", ts, sapisid, origin)))
 	return fmt.Sprintf("%s%d_%s", SapisidHashPrefix, ts, hex.EncodeToString(sum[:]))
+}
+
+// buildChangesUrl extracts the Google API key from a captured notes-pa URL and
+// builds the changes sync endpoint. The key is shared across notes-pa endpoints,
+// so it can be harvested from any notes-pa entry (e.g. getFamilyInfo) when the
+// HAR did not capture a dedicated "changes" request.
+func buildChangesUrl(harUrl string) (string, error) {
+	idx := strings.Index(harUrl, UrlQueryKey)
+	if idx < 0 {
+		return "", errors.New("google keep api key not found in HAR url")
+	}
+	key := harUrl[idx+len(UrlQueryKey):]
+	if amp := strings.Index(key, "&"); amp >= 0 {
+		key = key[:amp]
+	}
+	return fmt.Sprintf(ChangesUrlTmpl, key), nil
 }
