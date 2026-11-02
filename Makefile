@@ -1,8 +1,9 @@
 .PHONY:
 
 export GOOS=linux
+VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo dev)
 build:
-	go build -o ./.bin/app ./cmd/main.go
+	go build -ldflags "-X github.com/sku4/alice-checklist/pkg/version.Version=$(VERSION)" -o ./.bin/app ./cmd/main.go
 
 run: build
 	docker-compose up --remove-orphans --build server

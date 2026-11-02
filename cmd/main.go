@@ -11,6 +11,7 @@ import (
 	"github.com/sku4/alice-checklist/internal/service"
 	"github.com/sku4/alice-checklist/lang"
 	"github.com/sku4/alice-checklist/pkg/boltdb"
+	"github.com/sku4/alice-checklist/pkg/version"
 	"os"
 	"os/signal"
 	"syscall"
@@ -25,6 +26,10 @@ import (
 
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
+
+	// Log the build version first so a freshly deployed version is easy to tell
+	// apart from a still-running older one in the pod logs.
+	logrus.WithField("version", version.Version).Info("Checklist App Starting")
 
 	loc, err := lang.InitLocalize(lang.Ru)
 	if err != nil {

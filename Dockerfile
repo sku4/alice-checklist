@@ -6,7 +6,10 @@ COPY . /github.com/sku4/alice-checklist/
 WORKDIR /github.com/sku4/alice-checklist/
 
 RUN go mod download
-RUN GOOS=linux go build -o ./.bin/app ./cmd/main.go
+# Version is injected at build time (git short SHA in CI, "dev" locally) and
+# logged on startup so a freshly deployed version is identifiable in the logs.
+ARG VERSION=dev
+RUN GOOS=linux go build -ldflags "-X github.com/sku4/alice-checklist/pkg/version.Version=${VERSION}" -o ./.bin/app ./cmd/main.go
 
 FROM alpine:latest
 
