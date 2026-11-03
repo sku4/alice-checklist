@@ -308,8 +308,10 @@ func (r *Client) send(postData googlekeep.Request) (entryNoteResp googlekeep.Res
 	// cookie itself stays valid for months, so recomputing the hash keeps auth alive.
 	sapisid, origin := sapisidForHash(harEntryNote)
 
+	// Header names are matched case-insensitively: Chrome lowercases them in HAR
+	// exports, Firefox preserves original case ("Authorization", "X-Origin").
 	for _, header := range harEntryNote.Request.Headers {
-		switch header.Name {
+		switch strings.ToLower(header.Name) {
 		case HeaderXOriginKey:
 			req.Header.Add(header.Name, header.Value)
 		case HeaderAuthorizationKey:
@@ -363,7 +365,7 @@ func sapisidForHash(entry *har.Entry) (sapisid, origin string) {
 		}
 	}
 	for _, header := range entry.Request.Headers {
-		if header.Name == HeaderXOriginKey && header.Value != "" {
+		if strings.EqualFold(header.Name, HeaderXOriginKey) && header.Value != "" {
 			origin = header.Value
 		}
 	}
